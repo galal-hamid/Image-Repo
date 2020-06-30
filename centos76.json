@@ -1,0 +1,79 @@
+{
+  "variables": {
+    "version": "1.0"
+  },
+  "builders": [
+    {
+      "name": "centos76",
+      "vm_name": "centos76",
+      "vmdk_name": "centos76",
+      "type": "vmware-iso",
+      "communicator": "ssh",
+      "ssh_pty": "true",
+      "headless": false,
+      "vnc_disable_password": "true",
+      "disk_size": 16384,
+      "guest_os_type": "rhel7-64",
+      "floppy_files": ["centos-7-kickstart.cfg"],
+      "iso_url": "./iso/CentOS-7-x86_64-Minimal-1810.iso",
+      "iso_checksum": "5833cb3189a61c02abf50fb8c2db16cfa669bc3c",
+      "iso_checksum_type": "sha1",
+      "shutdown_command": "echo 'vagrant' | sudo -S /sbin/shutdown -P now",
+
+      "remote_host": "{{user `packer_remote_host`}}",
+      "remote_datastore": "{{user `packer_remote_datastore`}}",
+      "remote_username": "{{user `packer_remote_username`}}",
+      "remote_password": "{{user `packer_remote_password`}}",
+      "remote_type": "esx5",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "60m",
+      "tools_upload_flavor": "linux",
+      "boot_wait": "5s",
+      "vmx_data": {
+        "memsize": "4096",
+        "numvcpus": "2",
+        "ethernet0.networkName": "{{user `packer_remote_network`}}",
+        "ethernet0.present": "TRUE",
+        "ethernet0.startConnected": "TRUE",
+        "ethernet0.virtualDev": "e1000",
+        "ethernet0.addressType": "generated",
+        "ethernet0.generatedAddressOffset": "0",
+        "ethernet0.wakeOnPcktRcv": "FALSE"
+
+      },
+      "vmx_data_post": {
+        "ide1:0.startConnected": "FALSE",
+        "ide1:0.clientDevice": "TRUE",
+        "ide1:0.fileName": "emptyBackingString",
+        "ethernet0.virtualDev": "vmxnet3"
+      },
+      "boot_command": [
+        "<esc><wait>",
+        "linux ks=hd:fd0:/centos-7-kickstart.cfg<enter>"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "script": "scripts/centos-vagrant-settings.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "script": "scripts/centos-cx.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "script": "scripts/centos-ip-dhcp.sh"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
+      "script": "scripts/centos-vmware-cleanup.sh"
+    }
+  ]
+}
