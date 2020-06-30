@@ -58,7 +58,7 @@
     {
       "type": "shell",
       "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
-      "script": "scripts/centos-vagrant-settings.sh"
+      "script": "scripts/vm-user-settings.sh"
     },
     {
       "type": "shell",
@@ -68,12 +68,12 @@
     {
       "type": "shell",
       "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
-      "script": "scripts/centos-ip-dhcp.sh"
+      "script": "scripts/set-dhcp.sh"
     },
     {
       "type": "shell",
       "execute_command": "echo 'vagrant' | {{ .Vars }} sudo -E -S sh '{{ .Path }}'",
-      "script": "scripts/centos-vmware-cleanup.sh"
+      "script": "scripts/cleanup.sh"
     }
   ]
 }
